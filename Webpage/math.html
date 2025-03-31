@@ -1,143 +1,210 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Math Exercises</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edu-Bot Math</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             text-align: center;
             margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
+
         .top-bar {
             background-color: red;
             color: white;
             padding: 15px;
-            font-size: 20px;
-            width: 100%;
+            font-size: 18px;
             display: flex;
             justify-content: space-between;
-        }
-        .container {
-            display: flex;
             align-items: center;
-            justify-content: center;
-            width: 100%;
+        }
+
+        .container {
             max-width: 800px;
-            margin: 50px auto;
+            margin: 30px auto;
             background: white;
-            padding: 30px;
+            padding: 20px;
             border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
             position: relative;
         }
+
         .progress-container {
-            width: 10px;
-            height: 300px;
-            background: #ddd;
-            border-radius: 5px;
-            position: sticky;
-            left: 10px;
-            top: 5px;
-            transform: translateY(-50%);
+            background: #ccc;
+            border-radius: 25px;
+            height: 20px;
+            width: 100%;
+            margin-bottom: 20px;
             overflow: hidden;
         }
-        .progress {
-            width: 100%;
-            height: 0%;
-            background-color: green;
-            transition: height 0.5s;
+
+        .progress-bar {
+            background-color: lightgreen;
+            height: 100%;
+            width: 25%; /* Placeholder percentage */
+            transition: width 0.3s;
         }
-        .exercise {
-            width: 100%;
-            text-align: center;
+
+        .mode-toggle {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 20px;
         }
-        input {
-            width: 80%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 18px;
-            text-align: center;
-        }
-        .hidden {
-            display: none;
-        }
-        button {
-            width: 85%;
-            padding: 10px;
-            margin-top: 10px;
-            background: lightgreen;
+
+        .toggle-btn {
+            background-color: #ddd;
             border: none;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+            .toggle-btn.active {
+                background-color: lightgreen;
+            }
+
+        .question {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .keypad, .mic-area {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .keypad-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 60px);
+            gap: 10px;
+        }
+
+        .key {
+            padding: 15px;
+            font-size: 20px;
+            border: none;
+            background-color: #eee;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 16px;
+        }
+
+        .keypad .key.action {
+            background-color: lightgreen;
+        }
+
+        .exit-btn {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .mic-placeholder {
+            font-size: 60px;
+            color: gray;
         }
     </style>
 </head>
 <body>
     <div class="top-bar">
-        <div>Math Exercises</div>
-        <button onclick="quitLesson()" style="background: white; color: red; border: none; font-size: 16px; cursor: pointer;">Quit Lesson</button>
+        <div>Edu-Bot Math</div>
+        <div>👤 Name</div>
     </div>
-    
+
     <div class="container">
         <div class="progress-container">
-            <div class="progress"></div>
+            <div class="progress-bar" id="progress-bar"></div>
         </div>
-        
-        <div id="exercise-container" class="exercise">
-            <p id="question-text">Loading question...</p>
-            <input type="number" id="answer-input">
+
+        <div class="mode-toggle">
+            <button id="micBtn" class="toggle-btn" onclick="setMode('mic')">🎤</button>
+            <button id="keypadBtn" class="toggle-btn active" onclick="setMode('keypad')">🔢</button>
         </div>
+
+        <div class="question" id="question-display">Question 1<br>2 + 2 = ?</div>
+
+        <div class="keypad" id="keypad-mode">
+            <div class="keypad-grid">
+                <button class="key" onclick="appendAnswer('1')">1</button>
+                <button class="key" onclick="appendAnswer('2')">2</button>
+                <button class="key" onclick="appendAnswer('3')">3</button>
+                <button class="key" onclick="appendAnswer('4')">4</button>
+                <button class="key" onclick="appendAnswer('5')">5</button>
+                <button class="key" onclick="appendAnswer('6')">6</button>
+                <button class="key" onclick="appendAnswer('7')">7</button>
+                <button class="key" onclick="appendAnswer('8')">8</button>
+                <button class="key" onclick="appendAnswer('9')">9</button>
+                <button class="key" onclick="clearAnswer()">&lt;</button>
+                <button class="key" onclick="appendAnswer('0')">0</button>
+                <button class="key action" onclick="submitAnswer()">✔</button>
+            </div>
+        </div>
+
+        <div class="mic-area" id="mic-mode">
+            <div class="mic-placeholder">🎤</div>
+        </div>
+
+        <button class="exit-btn" onclick="exitLesson()">Exit Lesson</button>
     </div>
 
     <script>
-        let progress = 0;
-        let currentIndex = 0;
-        const exercises = [
-            { question: "What is 2 + 2?", answer: 4 },
-            { question: "What is 5 + 3?", answer: 8 },
-            { question: "What is 10 - 7?", answer: 3 },
-            { question: "What is 4 × 2?", answer: 8 }
-        ];
+        let currentAnswer = "";
 
-        function loadNextQuestion() {
-            if (currentIndex < exercises.length) {
-                document.getElementById("question-text").innerText = exercises[currentIndex].question;
-                document.getElementById("answer-input").value = "";
+        function setMode(mode) {
+            const micBtn = document.getElementById("micBtn");
+            const keypadBtn = document.getElementById("keypadBtn");
+            const micMode = document.getElementById("mic-mode");
+            const keypadMode = document.getElementById("keypad-mode");
+
+            if (mode === "mic") {
+                micBtn.classList.add("active");
+                keypadBtn.classList.remove("active");
+                micMode.style.display = "flex";
+                keypadMode.style.display = "none";
             } else {
-                alert("🎉 Lesson Complete! Great job!");
-                quitLesson();
+                keypadBtn.classList.add("active");
+                micBtn.classList.remove("active");
+                keypadMode.style.display = "flex";
+                micMode.style.display = "none";
             }
         }
 
-        function checkAnswer(event) {
-            if (event.key === "Enter") {
-                let userAnswer = document.getElementById("answer-input").value;
-                if (parseInt(userAnswer) === exercises[currentIndex].answer) {
-                    progress += 100 / exercises.length;
-                    document.querySelector(".progress").style.height = progress + "%";
-                    currentIndex++;
-                    loadNextQuestion();
-                } else {
-                    alert("❌ Incorrect! Try again.");
-                }
-            }
+        function appendAnswer(num) {
+            currentAnswer += num;
+            console.log("Current Input:", currentAnswer);
         }
 
-        function quitLesson() {
-            window.location.href = "subjects.html";  // Redirects to home page
+        function clearAnswer() {
+            currentAnswer = "";
+            console.log("Answer cleared.");
         }
 
-        document.getElementById("answer-input").addEventListener("keypress", checkAnswer);
-        loadNextQuestion();
+        function submitAnswer() {
+            console.log("Submitted Answer:", currentAnswer);
+            // You could add validation and load the next question here
+            currentAnswer = "";
+        }
+
+        function exitLesson() {
+            window.location.href = "subjects.html";
+        }
+
+        // Initialize default mode
+        window.onload = () => {
+            setMode("keypad");
+        };
     </script>
 </body>
 </html>
