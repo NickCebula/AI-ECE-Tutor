@@ -1,143 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Math Exercises</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edu-Bot Reading</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             text-align: center;
             margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
+
         .top-bar {
-            background-color: red;
+            background-color: lightgreen;
             color: white;
             padding: 15px;
             font-size: 20px;
-            width: 100%;
             display: flex;
             justify-content: space-between;
-        }
-        .container {
-            display: flex;
             align-items: center;
-            justify-content: center;
-            width: 100%;
+        }
+
+        .container {
             max-width: 800px;
-            margin: 50px auto;
+            margin: 30px auto;
             background: white;
-            padding: 30px;
+            padding: 20px;
             border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
             position: relative;
         }
+
         .progress-container {
-            width: 10px;
-            height: 300px;
-            background: #ddd;
-            border-radius: 5px;
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
+            background: #ccc;
+            border-radius: 25px;
+            height: 20px;
+            width: 100%;
+            margin-bottom: 20px;
             overflow: hidden;
         }
-        .progress {
-            width: 100%;
-            height: 0%;
-            background-color: green;
-            transition: height 0.5s;
+
+        .progress-bar {
+            background-color: lightgreen;
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s;
         }
-        .exercise {
-            width: 100%;
-            text-align: center;
+
+        .mode-toggle {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 20px;
         }
-        input {
-            width: 80%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 18px;
-            text-align: center;
-        }
-        .hidden {
-            display: none;
-        }
-        button {
-            width: 85%;
-            padding: 10px;
-            margin-top: 10px;
-            background: lightgreen;
+
+        .toggle-btn {
+            background-color: #ddd;
             border: none;
-            border-radius: 5px;
+            padding: 10px;
+            border-radius: 50%;
             cursor: pointer;
-            font-size: 16px;
+        }
+
+            .toggle-btn.active {
+                background-color: lightgreen;
+            }
+
+        .question {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .mic-area {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            flex-direction: column;
+        }
+
+        .mic-placeholder {
+            font-size: 60px;
+            color: gray;
+        }
+
+        .exit-btn {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 5px;
         }
     </style>
 </head>
 <body>
     <div class="top-bar">
-        <div>Math Exercises</div>
-        <button onclick="quitLesson()" style="background: white; color: red; border: none; font-size: 16px; cursor: pointer;">Quit Lesson</button>
+        <div>Edu-Bot Reading</div>
+        <div>👤 <span id="username-display"></span></div>
     </div>
-    
+
     <div class="container">
         <div class="progress-container">
-            <div class="progress"></div>
+            <div class="progress-bar" id="progress-bar"></div>
         </div>
-        
-        <div id="exercise-container" class="exercise">
-            <p id="question-text">Loading question...</p>
-            <input type="number" id="answer-input">
+
+        <div class="question" id="question-display"></div>
+
+        <div class="mic-area" id="mic-mode">
+            <div class="mic-placeholder">🎤</div>
         </div>
+
+        <button class="exit-btn" onclick="exitLesson()">Exit Lesson</button>
     </div>
 
     <script>
-        let progress = 0;
         let currentIndex = 0;
-        const exercises = [
-            { question: "What is 2 + 2?", answer: 4 },
-            { question: "What is 5 + 3?", answer: 8 },
-            { question: "What is 10 - 7?", answer: 3 },
-            { question: "What is 4 × 2?", answer: 8 }
+        let correctCount = 0;
+        let retryQueue = [];
+
+        const questions = [
+            { q: "Please read: The quick brown fox jumps over the lazy dog." },
+            { q: "Please read: She sells seashells by the seashore." },
+            { q: "Please read: How much wood would a woodchuck chuck if a woodchuck could chuck wood?" }
         ];
 
-        function loadNextQuestion() {
-            if (currentIndex < exercises.length) {
-                document.getElementById("question-text").innerText = exercises[currentIndex].question;
-                document.getElementById("answer-input").value = "";
+        function loadQuestion() {
+            if (currentIndex < questions.length) {
+                document.getElementById("question-display").innerHTML = `Question ${currentIndex + 1}<br>${questions[currentIndex].q}`;
+            } else if (retryQueue.length > 0) {
+                questions.push(...retryQueue);
+                retryQueue = [];
+                loadQuestion();
             } else {
-                alert("🎉 Lesson Complete! Great job!");
-                quitLesson();
+                document.getElementById("question-display").innerText = "🎉 Lesson Complete!";
             }
         }
 
-        function checkAnswer(event) {
-            if (event.key === "Enter") {
-                let userAnswer = document.getElementById("answer-input").value;
-                if (parseInt(userAnswer) === exercises[currentIndex].answer) {
-                    progress += 100 / exercises.length;
-                    document.querySelector(".progress").style.height = progress + "%";
-                    currentIndex++;
-                    loadNextQuestion();
-                } else {
-                    alert("❌ Incorrect! Try again.");
-                }
+        function updateProgressBar() {
+            const percent = (correctCount / questions.length) * 100;
+            document.getElementById("progress-bar").style.width = percent + "%";
+        }
+
+        function exitLesson() {
+            window.location.href = "subjects.html";
+        }
+
+        window.onload = () => {
+            const username = localStorage.getItem("username");
+            if (username) {
+                document.getElementById("username-display").innerText = username;
+            } else {
+                window.location.href = "login.html";
             }
-        }
-
-        function quitLesson() {
-            window.location.href = "index.html";  // Redirects to home page
-        }
-
-        document.getElementById("answer-input").addEventListener("keypress", checkAnswer);
-        loadNextQuestion();
+            loadQuestion();
+        };
     </script>
 </body>
 </html>
