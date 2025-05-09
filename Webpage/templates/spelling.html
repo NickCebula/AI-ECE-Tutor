@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edu-Bot Spelling</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            margin: 0;
+        }
+
+        .top-bar {
+            background-color: red;
+            color: white;
+            padding: 15px;
+            font-size: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .progress-container {
+            background: #ccc;
+            border-radius: 25px;
+            height: 20px;
+            width: 100%;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background-color: lightgreen;
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .mode-toggle {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .toggle-btn {
+            background-color: #ddd;
+            border: none;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+            .toggle-btn.active {
+                background-color: lightgreen;
+            }
+
+        .question {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .keypad, .mic-area {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            flex-direction: column;
+        }
+
+        .keypad-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 40px);
+            gap: 10px;
+        }
+
+        .key {
+            padding: 15px;
+            font-size: 20px;
+            border: none;
+            background-color: #eee;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .keypad .key.action {
+            background-color: lightgreen;
+        }
+
+        .exit-btn {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .mic-placeholder {
+            font-size: 60px;
+            color: gray;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <div>Edu-Bot Spelling</div>
+        <div>👤 <span id="username-display"></span></div>
+    </div>
+
+    <div class="container">
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+
+        <div class="question" id="question-display"></div>
+        <button id="speakerBtn" class="toggle-btn" onclick="speakQuestion()">🔊</button>
+
+        <div class="keypad" id="keypad-mode">
+            <input type="text" id="answer-box" readonly style="font-size: 24px; text-align: center; margin-bottom: 15px; width: 180px; padding: 10px; border: 2px solid #ccc; border-radius: 10px;" />
+            <div class="keypad-grid">
+                <button class="key" onclick="appendAnswer('A')">A</button>
+                <button class="key" onclick="appendAnswer('B')">B</button>
+                <button class="key" onclick="appendAnswer('C')">C</button>
+                <button class="key" onclick="appendAnswer('D')">D</button>
+                <button class="key" onclick="appendAnswer('E')">E</button>
+                <button class="key" onclick="appendAnswer('F')">F</button>
+                <button class="key" onclick="appendAnswer('G')">G</button>
+                <button class="key" onclick="appendAnswer('H')">H</button>
+                <button class="key" onclick="appendAnswer('I')">I</button>
+                <button class="key" onclick="appendAnswer('J')">J</button>
+                <button class="key" onclick="appendAnswer('K')">K</button>
+                <button class="key" onclick="appendAnswer('L')">L</button>
+                <button class="key" onclick="appendAnswer('M')">M</button>
+                <button class="key" onclick="appendAnswer('N')">N</button>
+                <button class="key" onclick="appendAnswer('O')">O</button>
+                <button class="key" onclick="appendAnswer('P')">P</button>
+                <button class="key" onclick="appendAnswer('Q')">Q</button>
+                <button class="key" onclick="appendAnswer('R')">R</button>
+                <button class="key" onclick="appendAnswer('S')">S</button>
+                <button class="key" onclick="appendAnswer('T')">T</button>
+                <button class="key" onclick="appendAnswer('U')">U</button>
+                <button class="key" onclick="appendAnswer('V')">V</button>
+                <button class="key" onclick="appendAnswer('W')">W</button>
+                <button class="key" onclick="appendAnswer('X')">X</button>
+                <button class="key" onclick="appendAnswer('Y')">Y</button>
+                <button class="key" onclick="appendAnswer('Z')">Z</button>
+                <button class="key" style="background-color: red; color: white;" onclick="clearAnswer()">&lt;</button>
+                <button class="key action" onclick="submitAnswer()">✔</button>
+            </div>
+            <div id="feedback" style="font-size: 20px; margin-top: 10px;"></div>
+        </div>
+
+        <div class="mic-area" id="mic-mode">
+            <div class="mic-placeholder">🎤</div>
+        </div>
+
+        <button class="exit-btn" onclick="exitLesson()">Exit Lesson</button>
+    </div>
+
+    <script>
+        let currentAnswer = "";
+        let currentIndex = 0;
+        let correctCount = 0;
+        let retryQueue = [];
+
+        const questions = [
+            { q: "apple.jpg", a: "APPLE" },
+            { q: "banana.jpg", a: "BANANA" },
+            { q: "cat.jpg", a: "CAT" }
+        ];
+
+        function loadQuestion() {
+            if (currentIndex < questions.length) {
+                document.getElementById("question-display").innerHTML = `<img src="images/${questions[currentIndex].q}" alt="Question Image" style="max-width: 100%; height: auto;" />`;
+            } else if (retryQueue.length > 0) {
+                questions.push(...retryQueue);
+                retryQueue = [];
+                loadQuestion();
+            } else {
+                document.getElementById("question-display").innerText = "🎉 Lesson Complete!";
+            }
+        }
+
+        function speakQuestion() {
+            const utterance = new SpeechSynthesisUtterance(questions[currentIndex].a);
+            speechSynthesis.speak(utterance);
+        }
+
+        function appendAnswer(letter) {
+            currentAnswer += letter;
+            document.getElementById("answer-box").value = currentAnswer;
+        }
+
+        function clearAnswer() {
+            currentAnswer = "";
+            document.getElementById("answer-box").value = "";
+            document.getElementById("feedback").innerText = "";
+        }
+
+        function updateProgressBar() {
+            const percent = (correctCount / questions.length) * 100;
+            document.getElementById("progress-bar").style.width = percent + "%";
+        }
+
+        function submitAnswer() {
+            const feedback = document.getElementById("feedback");
+            const correctAnswer = questions[currentIndex].a;
+
+            if (currentAnswer === correctAnswer) {
+                feedback.innerText = "✅ Correct!";
+                feedback.style.color = "green";
+                correctCount++;
+                updateProgressBar();
+            } else {
+                feedback.innerText = "❌ Try Again Later!";
+                feedback.style.color = "red";
+                retryQueue.push(questions[currentIndex]);
+            }
+
+            currentAnswer = "";
+            document.getElementById("answer-box").value = "";
+            currentIndex++;
+            setTimeout(() => {
+                feedback.innerText = "";
+                loadQuestion();
+            }, 1000);
+        }
+
+        function exitLesson() {
+            window.location.href = "/subjects";
+        }
+
+        window.onload = () => {
+            const username = localStorage.getItem("username");
+            if (username) {
+                document.getElementById("username-display").innerText = username;
+            } else {
+                window.location.href = "login.html";
+            }
+            loadQuestion();
+        };
+    </script>
+</body>
+</html>

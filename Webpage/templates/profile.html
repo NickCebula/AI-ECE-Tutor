@@ -1,0 +1,97 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Edu-Bot Profile</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      text-align: center;
+      margin: 0;
+    }
+    .top-bar {
+      background-color: deepskyblue;
+      color: white;
+      padding: 15px;
+      font-size: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .nav-links {
+      display: flex;
+      gap: 20px;
+    }
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .container {
+      max-width: 600px;
+      margin: 50px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+    .icon {
+      font-size: 50px;
+    }
+    .subject-times {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 30px;
+    }
+    .subject-time {
+      padding: 10px;
+      color: white;
+      border-radius: 5px;
+      width: 100px;
+    }
+    .math { background: red; }
+    .reading { background: lightgreen; }
+    .spelling { background: blue; }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <div onclick="location.href='/subjects'" style="cursor: pointer;">Edu-Bot</div>
+    <div class="nav-links">
+      <a href="subjects.html">SUBJECTS</a>
+      <a href="evaluations.html">EVALUATIONS</a>
+      <a href="profile.html">PROFILE</a>
+    </div>
+    <div>👤 <span id="username-display"></span></div>
+  </div>
+
+  <div class="container">
+    <h2>PROFILE</h2>
+    <div class="icon">👤</div>
+    <p><strong>Name:</strong> <span id="display-name">---</span></p>
+    <p><strong>Username:</strong> <span id="display-username">---</span></p>
+    <p><strong>DOB:</strong> <span id="display-dob">---</span></p>
+    <p><strong>Favorite Subject:</strong> <span id="display-favorite">---</span></p>
+
+    <div class="subject-times">
+      <div class="subject-time math">MATH<br>Total time:</div>
+      <div class="subject-time reading">READING<br>Total time:</div>
+      <div class="subject-time spelling">SPELLING<br>Total time:</div>
+    </div>
+  </div>
+
+  <script>
+    const username = localStorage.getItem("username") || "Guest";
+    document.getElementById("username-display").innerText = username;
+    document.getElementById("display-username").innerText = username;
+    document.getElementById("display-name").innerText = username; // Placeholder for now
+
+    // Placeholder data — you can expand this later
+    document.getElementById("display-dob").innerText = "01/01/2010";
+    document.getElementById("display-favorite").innerText = "Reading";
+  </script>
+</body>
+</html>

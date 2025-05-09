@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edu-Bot Reading</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            margin: 0;
+        }
+
+        .top-bar {
+            background-color: lightgreen;
+            color: white;
+            padding: 15px;
+            font-size: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .progress-container {
+            background: #ccc;
+            border-radius: 25px;
+            height: 20px;
+            width: 100%;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background-color: lightgreen;
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .mode-toggle {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .toggle-btn {
+            background-color: #ddd;
+            border: none;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+            .toggle-btn.active {
+                background-color: lightgreen;
+            }
+
+        .question {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .mic-area {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            flex-direction: column;
+        }
+
+        .mic-placeholder {
+            font-size: 60px;
+            color: gray;
+        }
+
+        .exit-btn {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <div>Edu-Bot Reading</div>
+        <div>👤 <span id="username-display"></span></div>
+    </div>
+
+    <div class="container">
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+
+        <div class="question" id="question-display"></div>
+
+        <div class="mic-area" id="mic-mode">
+            <div class="mic-placeholder">🎤</div>
+        </div>
+
+        <button class="exit-btn" onclick="exitLesson()">Exit Lesson</button>
+    </div>
+
+    <script>
+        let currentIndex = 0;
+        let correctCount = 0;
+        let retryQueue = [];
+
+        const questions = [
+            { q: "Please read: The quick brown fox jumps over the lazy dog." },
+            { q: "Please read: She sells seashells by the seashore." },
+            { q: "Please read: How much wood would a woodchuck chuck if a woodchuck could chuck wood?" }
+        ];
+
+        function loadQuestion() {
+            if (currentIndex < questions.length) {
+                document.getElementById("question-display").innerHTML = `Question ${currentIndex + 1}<br>${questions[currentIndex].q}`;
+            } else if (retryQueue.length > 0) {
+                questions.push(...retryQueue);
+                retryQueue = [];
+                loadQuestion();
+            } else {
+                document.getElementById("question-display").innerText = "🎉 Lesson Complete!";
+            }
+        }
+
+        function updateProgressBar() {
+            const percent = (correctCount / questions.length) * 100;
+            document.getElementById("progress-bar").style.width = percent + "%";
+        }
+
+        function exitLesson() {
+            window.location.href = "/subjects";
+        }
+
+        window.onload = () => {
+            const username = localStorage.getItem("username");
+            if (username) {
+                document.getElementById("username-display").innerText = username;
+            } else {
+                window.location.href = "login.html";
+            }
+            loadQuestion();
+        };
+    </script>
+</body>
+</html>
