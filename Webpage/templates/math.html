@@ -121,7 +121,7 @@
 <body>
     <div class="top-bar">
         <div onclick="location.href='/subjects'" style="cursor: pointer;">Edu-Bot Math</div>
-        <div>👤 <span id="username-display"></span></div>
+        <div>👤 {{ username }}</div>
     </div>
 
     <div class="container">
@@ -313,12 +313,6 @@
         }
 
         window.onload = () => {
-            const username = localStorage.getItem("username");
-            if (username) {
-                document.getElementById("username-display").innerText = username;
-            } else {
-                window.location.href = "login.html";
-            }
             setMode("keypad");
             loadQuestion();
         };
