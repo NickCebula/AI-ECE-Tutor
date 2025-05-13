@@ -58,15 +58,15 @@
   </style>
 </head>
 <body>
-  <div class="top-bar">
-    <div onclick="location.href='/subjects'" style="cursor: pointer;">Edu-Bot</div>
-    <div class="nav-links">
-      <a href="/subjects">SUBJECTS</a>
-      <a href="/evaluations">EVALUATIONS</a>
-      <a href="/profile">PROFILE</a>
+    <div class="top-bar">
+        <div onclick="location.href='/subjects'" style="cursor: pointer;">Edu-Bot</div>
+        <div class="nav-links">
+            <a href="/subjects">SUBJECTS</a>
+            <a href="/evaluations">EVALUATIONS</a>
+            <a href="/profile">PROFILE</a>
+        </div>
+        <div>👤 {{ username }}</div>
     </div>
-    <div>👤 <span id="username-display"></span></div>
-  </div>
 
   <div class="container">
     <h2>PROFILE</h2>
@@ -84,7 +84,6 @@
   </div>
 
   <script>
-    const username = localStorage.getItem("username") || "Guest";
     document.getElementById("username-display").innerText = username;
     document.getElementById("display-username").innerText = username;
     document.getElementById("display-name").innerText = username; // Placeholder for now

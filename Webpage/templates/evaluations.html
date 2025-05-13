@@ -65,7 +65,7 @@
             <a href="/evaluations">EVALUATIONS</a>
             <a href="/profile">PROFILE</a>
         </div>
-        <div>👤 <span id="username-display"></span></div>
+        <div>👤 {{ username }}</div>
     </div>
 
     <div class="container">
@@ -77,8 +77,6 @@
     </div>
 
     <script>
-    document.getElementById("username-display").innerText = localStorage.getItem("username") || "Guest";
-
     function generateEvaluation() {
       const now = new Date();
       const entry = document.createElement("p");
