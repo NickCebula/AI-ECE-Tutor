@@ -279,7 +279,7 @@
         }
 
         function updateProgressBar() {
-            const percent = (correctCount / questions.length) * 100;
+            const percent = (correctCount / 5) * 100;
             document.getElementById("progress-bar").style.width = percent + "%";
         }
 
@@ -296,14 +296,18 @@
             } else {
                 feedback.innerText = "❌ Try Again Later!";
                 feedback.style.color = "red";
-                questions.splice(currentIndex, 1);}
+                // Append the current question to retryQueue
+                retryQueue.push(questions[currentIndex]);
+            }
 
             currentAnswer = "";
             document.getElementById("answer-box").value = "";
 
             setTimeout(() => {
                 feedback.innerText = "";
-                currentIndex++;
+                // Remove the current question from the questions array
+                questions.splice(currentIndex, 1);
+                // Do not increment currentIndex, as the next question will shift into this index
                 loadQuestion();
             }, 1000);
         }
