@@ -1,0 +1,91 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edu-Bot Evaluations</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            margin: 0;
+        }
+
+        .top-bar {
+            background-color: deepskyblue;
+            color: white;
+            padding: 15px;
+            font-size: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+            .nav-links a {
+                color: white;
+                text-decoration: none;
+                font-weight: bold;
+            }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            padding: 10px 20px;
+            background: lightgreen;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .evaluations-list {
+            margin-top: 30px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <div onclick="location.href='/subjects'" style="cursor: pointer;">Edu-Bot</div>
+        <div class="nav-links">
+            <a href="/subjects">SUBJECTS</a>
+            <a href="/evaluations">EVALUATIONS</a>
+            <a href="/profile">PROFILE</a>
+        </div>
+        <div>👤 {{ username }}</div>
+    </div>
+
+    <div class="container">
+        <h2>EVALUATIONS</h2>
+        <button onclick="generateEvaluation()">GENERATE NEW EVALUATION</button>
+        <div class="evaluations-list" id="evaluations-log">
+            <p>No evaluations generated yet.</p>
+        </div>
+    </div>
+
+    <script>
+    function generateEvaluation() {
+      const now = new Date();
+      const entry = document.createElement("p");
+      entry.innerText = `${now.toLocaleDateString()} ${now.toLocaleTimeString()} — Evaluation created`;
+
+      const log = document.getElementById("evaluations-log");
+      if (log.children[0]?.innerText.includes("No evaluations")) log.innerHTML = "";
+      log.appendChild(entry);
+    }
+    </script>
+</body>
+</html>
