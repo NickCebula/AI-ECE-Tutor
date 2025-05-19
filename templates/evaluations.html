@@ -59,13 +59,13 @@
 </head>
 <body>
     <div class="top-bar">
-        <div onclick="location.href='subjects.html'" style="cursor: pointer;">Edu-Bot</div>
+        <div onclick="location.href='/subjects'" style="cursor: pointer;">Edu-Bot</div>
         <div class="nav-links">
-            <a href="subjects.html">SUBJECTS</a>
-            <a href="evaluations.html">EVALUATIONS</a>
-            <a href="profile.html">PROFILE</a>
+            <a href="subjects">SUBJECTS</a>
+            <a href="evaluations">EVALUATIONS</a>
+            <a href="profile">PROFILE</a>
         </div>
-        <div>👤 <span id="username-display"></span></div>
+        <div>👤 {{ username }}</div>
     </div>
 
     <div class="container">
@@ -75,19 +75,5 @@
             <p>No evaluations generated yet.</p>
         </div>
     </div>
-
-    <script>
-    document.getElementById("username-display").innerText = localStorage.getItem("username") || "Guest";
-
-    function generateEvaluation() {
-      const now = new Date();
-      const entry = document.createElement("p");
-      entry.innerText = `${now.toLocaleDateString()} ${now.toLocaleTimeString()} — Evaluation created`;
-
-      const log = document.getElementById("evaluations-log");
-      if (log.children[0]?.innerText.includes("No evaluations")) log.innerHTML = "";
-      log.appendChild(entry);
-    }
-    </script>
 </body>
 </html>

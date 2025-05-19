@@ -61,11 +61,11 @@
   <div class="top-bar">
     <div onclick="location.href='/subjects'" style="cursor: pointer;">Edu-Bot</div>
     <div class="nav-links">
-      <a href="subjects.html">SUBJECTS</a>
-      <a href="evaluations.html">EVALUATIONS</a>
-      <a href="profile.html">PROFILE</a>
+      <a href="/subjects">SUBJECTS</a>
+      <a href="/evaluations">EVALUATIONS</a>
+      <a href="/profile">PROFILE</a>
     </div>
-    <div>👤 <span id="username-display"></span></div>
+    <div>👤 {{ username }}</div>
   </div>
 
   <div class="container">
@@ -82,16 +82,6 @@
       <div class="subject-time spelling">SPELLING<br>Total time:</div>
     </div>
   </div>
-
-  <script>
-    const username = localStorage.getItem("username") || "Guest";
-    document.getElementById("username-display").innerText = username;
-    document.getElementById("display-username").innerText = username;
-    document.getElementById("display-name").innerText = username; // Placeholder for now
-
-    // Placeholder data — you can expand this later
-    document.getElementById("display-dob").innerText = "01/01/2010";
-    document.getElementById("display-favorite").innerText = "Reading";
-  </script>
+  <script src="{{ url_for('static', filename='scripts/profile.js') }}"></script>
 </body>
 </html>
